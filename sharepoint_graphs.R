@@ -9,12 +9,7 @@ rm(list = ls(all = T))
 library(tidyverse)
 
 mytheme <- theme_bw(base_size = 15, base_family = "Franklin Gothic Medium") +
-  theme(legend.text = element_text(size = 10),
-        legend.title = element_text(size = 11),
-        text = element_text(size = 14),     
-        axis.title = element_text(size = 12),
-        axis.text  = element_text(size = 10, family = "Franklin Gothic Medium"),
-        panel.grid = element_blank())
+  theme(panel.grid = element_blank())
 
 ###--- BY PROGRAM ------------------------------------------------
 
@@ -65,7 +60,8 @@ df1 <- read.csv("sharepoint_progress2.csv", header = T) %>%
   filter(program == "Total") %>% 
   select(-program) %>% 
   rename("data index" = data.index) %>% 
-  pivot_longer(c(glossary, procedure, "data index")) 
+  pivot_longer(c(glossary, procedure, "data index")) %>% 
+  mutate(name = factor(name, levels = c("glossary", "procedure", 'data index')))
   
 
 ggplot(df1, aes(x = name, y = value, fill = name)) + 
@@ -73,7 +69,7 @@ ggplot(df1, aes(x = name, y = value, fill = name)) +
   geom_bar(stat = "identity") +
   theme(axis.text.x = element_text(size = 14),
         legend.position = "none") +
-  scale_fill_manual(values=c("#CC6666", "#9999CC", "#66CC99")) +
+  #scale_fill_manual(values=c("#CC6666", "#9999CC", "#66CC99")) +
   labs(x = NULL,
        fill = NULL,
        y = "number of items in Sharepoint",
@@ -86,7 +82,8 @@ ggplot(df1, aes(x = name, y = value, fill = name)) +
 df2 <- read.csv("sharepoint_progress2.csv", header = T) %>% 
   filter(program != "Total") %>% 
   rename("data index" = data.index) %>% 
-  pivot_longer(c(glossary, procedure, "data index"))
+  pivot_longer(c(glossary, procedure, "data index"))%>% 
+  mutate(name = factor(name, levels = c("glossary", "procedure", 'data index')))
 
 # Glossary
 ggplot(df2, aes(x = program, y = value, fill = name)) + 
@@ -94,7 +91,7 @@ ggplot(df2, aes(x = program, y = value, fill = name)) +
   geom_bar(stat = "identity") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "none") +
-  scale_fill_manual(values=c("#CC6666", "#9999CC", "#66CC99")) +
+  #scale_fill_manual(values=c("#CC6666", "#9999CC", "#66CC99")) +
   labs(x = NULL,
        fill = NULL,
        y = "number of items",

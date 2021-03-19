@@ -11,14 +11,7 @@ library(ggstance)
 library(gridExtra)
 
 mytheme <- theme_bw(base_size = 15, base_family = "Franklin Gothic Medium") +
-  theme(legend.text = element_text(size = 10),
-        legend.title = element_text(size = 11),
-        text = element_text(size = 14),     
-        axis.title = element_text(size = 12),
-        axis.text.y  = element_text(size = 10, family = "Franklin Gothic Medium"),
-        axis.text.x  = element_text(size = 14, family = "Franklin Gothic Medium"),
-        panel.grid = element_blank(),
-        title = element_text(size = 11))
+  theme(panel.grid = element_blank())
 
 df <- read.csv("survey_data.csv")
 
