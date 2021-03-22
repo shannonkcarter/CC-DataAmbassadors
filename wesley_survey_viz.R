@@ -15,11 +15,12 @@ df <- raw_df %>%
   mutate(response = factor(response, levels = c("Disagree", "Somewhat Disagree", "Neither Agree nor Disagree", "Somewhat Agree", "Agree"), ordered = T))
 
 ggplot(df, aes(x = response)) +
-  geom_histogram(stat = "count", fill = "#5c9ad2") +
+  geom_histogram(stat = "count", fill = "#50ABAB") +
   facet_wrap(~question,  labeller = label_wrap_gen(width = 40)) +
   mytheme +
   scale_x_discrete(drop = F) +
   labs(x = NULL,
        y = "number of responses") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggsave("wesley_presurvey.jpg", width = 8, height = 8, dpi = 600)
 
