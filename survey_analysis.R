@@ -13,7 +13,7 @@ library(gridExtra)
 mytheme <- theme_bw(base_size = 15, base_family = "Franklin Gothic Medium") +
   theme(panel.grid = element_blank())
 
-df <- read.csv("survey_data.csv")
+cc_df <- read.csv("survey_data.csv")
 
 ###--- POST-SURVEY HISTOGRAMS -----------------------------------
 
