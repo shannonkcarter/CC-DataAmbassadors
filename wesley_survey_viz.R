@@ -1,4 +1,3 @@
-
 library(tidyverse)
 library(googlesheets4)
 
@@ -13,10 +12,10 @@ pre <- pre_raw %>%
   select(-c("Timestamp", "Email Address", `What are some of the top challenges you face on a day to day basis around data?`)) %>% 
   pivot_longer(-Name, names_to = "question", values_to = "response") %>% 
   mutate(question = str_remove_all(question, "]"),
-         question = str_remove_all(question, "\\[")) %>% 
+         question = str_remove_all(question, "\\[")) %>%
   mutate(response = factor(response, levels = c("Disagree", "Somewhat Disagree", "Neither Agree nor Disagree", "Somewhat Agree", "Agree"), ordered = T))
 
-ggplot(pre, aes(x = response)) +
+ggplot(data = pre, aes(x = response)) +
   geom_histogram(stat = "count", fill = "#50ABAB") +
   facet_wrap(~question,  labeller = label_wrap_gen(width = 50)) +
   mytheme +
@@ -52,14 +51,15 @@ ggplot(post, aes(x = response)) +
         strip.text = element_text(size = 12, color = "black", hjust = 0)
   )
 ggsave("wesley_postsurvey.jpg", width = 11, height = 8, dpi = 600)
+
 ###--- DELTA PLOTS -----------------------------------------------
 pre_df <- pre_raw %>% 
   select(Name, 4:7) %>% 
   rename(name = 1, 
          `I feel comfortable using data to measure program outcomes` = 2,
          `If a new employee started today it would be easy for me to train them on how to enter data into databases at Wesley` = 3,
-         `I feel confident in my ability to clearly document data related processes at Wesley` = 4,
-         `It's easy to keep track of clients who are referred from one program to another within Wesley` = 5) %>% 
+         `Documenting procedures` = 4,
+         `Tracking referrals` = 5) %>% 
   mutate(time = "pre")
 
 post_df <- post_raw %>% 
@@ -67,23 +67,26 @@ post_df <- post_raw %>%
   rename(name = 1, 
        `I feel comfortable using data to measure program outcomes` = 2,
        `If a new employee started today it would be easy for me to train them on how to enter data into databases at Wesley` = 3,
-       `I feel confident in my ability to clearly document data related processes at Wesley` = 4,
-       `It's easy to keep track of clients who are referred from one program to another within Wesley` = 5) %>% 
+       `Documenting procedures` = 4,
+       `Tracking referrals` = 5) %>% 
   mutate(time = "post") %>% 
   rbind(pre_df) %>% 
   select(name, time, everything()) %>% 
   # some people reported their names differently at pre/post. this selects just first name
   mutate(name = sub(" .*", "", name)) %>% 
   # remove people who only took one of the 2 surveys
-  filter(!name %in% c("Bonnie", "David", "Dulce"))
-  
+  filter(name != "David") 
+
 pre_post <- post_df %>% 
   pivot_longer(cols = 3:6, 
                names_to = "question", values_to = "response") %>% 
   mutate(time = factor(time, 
                        levels = c("pre", "post"))) %>% 
   mutate(response = factor(response, 
-                           levels = c("Disagree", "Somewhat Disagree", "Neither Agree nor Disagree", "Somewhat Agree", "Agree")))
+                           levels = c("Disagree", "Somewhat Disagree", "Neither Agree nor Disagree", "Somewhat Agree", "Agree"))) %>% 
+  filter(!question %in% c("I feel comfortable using data to measure program outcomes",
+                          "If a new employee started today it would be easy for me to train them on how to enter data into databases at Wesley"))
+
 
 pd <- ggstance::position_dodgev(0.3)
 qs <- pre_post %>% 
@@ -91,8 +94,6 @@ qs <- pre_post %>%
   geom_point(position = pd, size = 2) +
   geom_line(position = pd, size = 1.5) +
   facet_wrap(~question, labeller = label_wrap_gen(width = 45)) +
-  scale_color_manual(values = c("#22162B", "#451F55", "#724E91", "#E54F6D", "#F8C630", "#E3170A", "#50ABAB")) +
-  #scale_color_brewer(palette = "Dark2") +
   labs(x = NULL, y = NULL) +
   mytheme +
   theme(legend.position = "none",
@@ -102,4 +103,4 @@ qs <- pre_post %>%
   ) +
   scale_y_discrete(drop = F)
 qs
-ggsave("wesley_pre_post_survey.jpg", width = 9, height = 8, dpi = 600)
+ggsave("wesley_pre_post_survey_2qs.jpg", width = 9, height = 4, dpi = 600)
