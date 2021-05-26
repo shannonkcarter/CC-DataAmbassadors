@@ -58,8 +58,8 @@ pre_df <- pre_raw %>%
   rename(name = 1, 
          `I feel comfortable using data to measure program outcomes` = 2,
          `If a new employee started today it would be easy for me to train them on how to enter data into databases at Wesley` = 3,
-         `Documenting procedures` = 4,
-         `Tracking referrals` = 5) %>% 
+         `I feel confident in my ability to clearly document data related processes at Wesley` = 4,
+         `It's easy to keep track of clients who are referred from one program to another within Wesley` = 5) %>% 
   mutate(time = "pre")
 
 post_df <- post_raw %>% 
@@ -67,8 +67,8 @@ post_df <- post_raw %>%
   rename(name = 1, 
        `I feel comfortable using data to measure program outcomes` = 2,
        `If a new employee started today it would be easy for me to train them on how to enter data into databases at Wesley` = 3,
-       `Documenting procedures` = 4,
-       `Tracking referrals` = 5) %>% 
+       `I feel confident in my ability to clearly document data related processes at Wesley` = 4,
+       `It's easy to keep track of clients who are referred from one program to another within Wesley` = 5) %>% 
   mutate(time = "post") %>% 
   rbind(pre_df) %>% 
   select(name, time, everything()) %>% 
@@ -83,10 +83,44 @@ pre_post <- post_df %>%
   mutate(time = factor(time, 
                        levels = c("pre", "post"))) %>% 
   mutate(response = factor(response, 
-                           levels = c("Disagree", "Somewhat Disagree", "Neither Agree nor Disagree", "Somewhat Agree", "Agree"))) %>% 
-  filter(!question %in% c("I feel comfortable using data to measure program outcomes",
-                          "If a new employee started today it would be easy for me to train them on how to enter data into databases at Wesley"))
+                           levels = c("Disagree", "Somewhat Disagree", "Neither Agree nor Disagree", "Somewhat Agree", "Agree"))) #%>% 
+  # filter(!question %in% c("I feel comfortable using data to measure program outcomes",
+  #                         "If a new employee started today it would be easy for me to train them on how to enter data into databases at Wesley"))
 
+pre_hist <- pre_post %>% 
+  filter(time == "pre") %>% 
+  ggplot(aes(x = response)) + 
+  geom_histogram(stat = "count", fill = "#50ABAB") +
+  facet_wrap(~question,  labeller = label_wrap_gen(width = 45)) +
+  mytheme +
+  scale_x_discrete(drop = F) +
+  labs(x = NULL,
+       y = "number of responses",
+       title = "Prior to this program...") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        strip.background = element_rect(color="white", fill="white"),
+        strip.text = element_text(size = 12, color = "black", hjust = 0)
+  )
+pre_hist
+ggsave("wesley_presurvey.jpg", width = 8, height = 8, dpi = 600)
+
+
+post_hist <- pre_post %>% 
+  filter(time == "post") %>% 
+  ggplot(aes(x = response)) + 
+  geom_histogram(stat = "count", fill = "#50ABAB") +
+  facet_wrap(~question,  labeller = label_wrap_gen(width = 45)) +
+  mytheme +
+  scale_x_discrete(drop = F) +
+  labs(x = NULL,
+       y = "number of responses",
+       title = "Compared with how I felt at the beginning of this program...") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        strip.background = element_rect(color="white", fill="white"),
+        strip.text = element_text(size = 12, color = "black", hjust = 0)
+  )
+post_hist
+ggsave("wesley_postsurvey.jpg", width = 8, height = 8, dpi = 600)
 
 pd <- ggstance::position_dodgev(0.3)
 qs <- pre_post %>% 
@@ -103,4 +137,4 @@ qs <- pre_post %>%
   ) +
   scale_y_discrete(drop = F)
 qs
-ggsave("wesley_pre_post_survey_2qs.jpg", width = 9, height = 4, dpi = 600)
+ggsave("wesley_pre_post_survey.jpg", width = 9, height = 6, dpi = 600)
