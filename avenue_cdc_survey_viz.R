@@ -123,10 +123,10 @@ qs <- pre_post %>%
   ggplot(aes(x = time, y = response, color = Name, group = Name)) +
   geom_point(position = pd, size = 2) +
   geom_line(position = pd, size = 1.5) +
-  facet_wrap(~question, labeller = label_wrap_gen(width = 45)) +
+  facet_wrap(~question, labeller = label_wrap_gen(width = 40)) +
   labs(x = NULL, y = NULL) +
   mytheme +
-  theme(#legend.position = "none",
+  theme(legend.position = "none",
         strip.background = element_rect(color="white", fill="white"),
         strip.text = element_text(size = 12, color = "black", hjust = 0),
         axis.text = element_text(size = 12)
